@@ -44,7 +44,6 @@ export class TextComponent implements AfterViewInit {
   display() {
     var box = document.querySelector('.box');
     var text = box.innerHTML;
-    console.log(text);
     const line_h = window.getComputedStyle(this.areaRef.nativeElement, null).getPropertyValue('line-height');
     const realCount = Math.ceil(box.clientHeight / parseInt(line_h, 10));
     if (realCount > this.txt.countStr) {
