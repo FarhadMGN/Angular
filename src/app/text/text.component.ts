@@ -42,13 +42,13 @@ export class TextComponent implements AfterViewInit {
   }
 
   display() {
-    var box = document.querySelector('.box');
-    var text = box.innerHTML;
+    const box = document.querySelector('.box');
+    const text = box.innerHTML;
     const line_h = window.getComputedStyle(this.areaRef.nativeElement, null).getPropertyValue('line-height');
     const realCount = Math.ceil(box.clientHeight / parseInt(line_h, 10));
     if (realCount > this.txt.countStr) {
       this.isFit = false;
-      var divTmp = document.createElement('div');
+      const divTmp = document.createElement('div');
       divTmp.style.position = 'absolute';
       divTmp.style.visibility = 'hidden';
       divTmp.style.width = box.clientWidth + 'px';
@@ -57,7 +57,7 @@ export class TextComponent implements AfterViewInit {
       divTmp.style.lineHeight = line_h;
       document.body.appendChild(divTmp);
       const new_h = parseInt(line_h, 10) * this.txt.countStr;
-      var i = text.length - 1;
+      let i = text.length - 1;
       for (; i >= 0 && divTmp.clientHeight > new_h; --i) {
         divTmp.innerHTML = text.substring(0, i) + '...';
       }
