@@ -1,7 +1,7 @@
-<div class="box" #textArea>
-  {{txt.text}}
-</div>
-
-<div class="tooltip" *ngIf="isShow">
-  {{txt.text}}
+<div class="box" [title]="text" #textArea>
+  <div>
+    <p #textP>
+      {{txt.text}}
+    </p>
+  </div>
 </div>
