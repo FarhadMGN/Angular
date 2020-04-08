@@ -19,7 +19,6 @@ export class AppComponent {
       '  gryaaaa Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cikue' +
       '  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequuntur  cumque decision delectus distinctio obcaecati! ' +
       '  No more ip sum dolor sit amet, consectetur adipisicing elit. Ex, quasi! ',
-    countStr: 2
-
+    countStr: 3
   };
 }

@@ -8,7 +8,7 @@ import {
   Input,
   OnInit,
   Renderer2,
-  ViewChild
+  ViewChild, AfterViewChecked
 } from '@angular/core';
 import {Text} from '../app.component';
 
@@ -17,54 +17,33 @@ import {Text} from '../app.component';
   templateUrl: './text.component.html',
   styleUrls: ['./text.component.css']
 })
-export class TextComponent implements AfterViewInit {
+export class TextComponent implements AfterViewInit, OnInit {
 
   @Input() txt: Text;
-  @ViewChild('textArea', {static: false}) areaRef: ElementRef;
-  isShow: boolean = false;
-  isFit:  boolean = false;
+  @ViewChild('textArea', {static: false}) areaRef: ElementRef;;
+  @ViewChild('textP', {static: false}) pRef: ElementRef;
+  text: string;
+  realCount: number;
+  constructor(private renderer: Renderer2) {}
 
-  @HostListener('mouseenter') onEnter() {
-    if (!this.isFit) {
-      setTimeout(() => {
-        this.isShow = true;
-      }, 300);
-    }
-  };
-  @HostListener('mouseleave') onleave() {
+  ngOnInit() {
     setTimeout(() => {
-      this.isShow = false;
-    }, 400);
-  };
+      if (this.realCount > this.txt.countStr) {
+        this.text = this.txt.text;
+      } else {
+        this.text = '';
+      }
+    });
+  }
+
+  display() {
+    const str = this.txt.countStr.toString();
+    const lineHeight = window.getComputedStyle(this.areaRef.nativeElement, null).getPropertyValue('line-height');
+    this.realCount = Math.ceil(this.pRef.nativeElement.clientHeight / parseInt(lineHeight, 10));
+    this.renderer.setStyle(this.areaRef.nativeElement, '-webkit-line-clamp', str);
+  }
 
   ngAfterViewInit() {
     this.display();
   }
-
-  display() {
-    const box = document.querySelector('.box');
-    const text = box.innerHTML;
-    const line_h = window.getComputedStyle(this.areaRef.nativeElement, null).getPropertyValue('line-height');
-    const realCount = Math.ceil(box.clientHeight / parseInt(line_h, 10));
-    if (realCount > this.txt.countStr) {
-      this.isFit = false;
-      const divTmp = document.createElement('div');
-      divTmp.style.position = 'absolute';
-      divTmp.style.visibility = 'hidden';
-      divTmp.style.width = box.clientWidth + 'px';
-      divTmp.innerHTML = text;
-      divTmp.style.fontSize = line_h;
-      divTmp.style.lineHeight = line_h;
-      document.body.appendChild(divTmp);
-      const new_h = parseInt(line_h, 10) * this.txt.countStr;
-      let i = text.length - 1;
-      for (; i >= 0 && divTmp.clientHeight > new_h; --i) {
-        divTmp.innerHTML = text.substring(0, i) + '...';
-      }
-      box.innerHTML = divTmp.innerHTML;
-    } else {
-      this.isFit = true;
-    }
-  }
-
 }
