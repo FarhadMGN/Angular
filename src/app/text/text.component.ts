@@ -17,16 +17,19 @@ import {Text} from '../app.component';
   templateUrl: './text.component.html',
   styleUrls: ['./text.component.css']
 })
-export class TextComponent implements AfterViewInit, OnInit {
+export class TextComponent implements AfterViewInit {
 
   @Input() txt: Text;
-  @ViewChild('textArea', {static: false}) areaRef: ElementRef;;
-  @ViewChild('textP', {static: false}) pRef: ElementRef;
+  @ViewChild('textArea', {static: false}) areaRef: ElementRef;
   text: string;
   realCount: number;
   constructor(private renderer: Renderer2) {}
-
-  ngOnInit() {
+  display() {
+    const str = this.txt.countStr.toString();
+    const lineHeight = window.getComputedStyle(this.areaRef.nativeElement, null).getPropertyValue('line-height');
+    this.realCount = Math.ceil(this.areaRef.nativeElement.children[0].children[0].clientHeight / parseInt(lineHeight, 10));
+    this.renderer.setStyle(this.areaRef.nativeElement, '-webkit-line-clamp', str);
+    console.log('log', this.realCount);
     setTimeout(() => {
       if (this.realCount > this.txt.countStr) {
         this.text = this.txt.text;
@@ -34,13 +37,6 @@ export class TextComponent implements AfterViewInit, OnInit {
         this.text = '';
       }
     });
-  }
-
-  display() {
-    const str = this.txt.countStr.toString();
-    const lineHeight = window.getComputedStyle(this.areaRef.nativeElement, null).getPropertyValue('line-height');
-    this.realCount = Math.ceil(this.pRef.nativeElement.clientHeight / parseInt(lineHeight, 10));
-    this.renderer.setStyle(this.areaRef.nativeElement, '-webkit-line-clamp', str);
   }
 
   ngAfterViewInit() {
