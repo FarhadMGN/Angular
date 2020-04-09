@@ -29,7 +29,6 @@ export class TextComponent implements AfterViewInit {
     const lineHeight = window.getComputedStyle(this.areaRef.nativeElement, null).getPropertyValue('line-height');
     this.realCount = Math.ceil(this.areaRef.nativeElement.children[0].children[0].clientHeight / parseInt(lineHeight, 10));
     this.renderer.setStyle(this.areaRef.nativeElement, '-webkit-line-clamp', str);
-    console.log('log', this.realCount);
     setTimeout(() => {
       if (this.realCount > this.txt.countStr) {
         this.text = this.txt.text;
