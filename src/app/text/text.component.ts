@@ -18,27 +18,52 @@ import {Text} from '../app.component';
   styleUrls: ['./text.component.css']
 })
 export class TextComponent implements AfterViewInit {
-
   @Input() txt: Text;
   @ViewChild('textArea', {static: false}) areaRef: ElementRef;
-  text: string;
+  toolText: string;
   realCount: number;
-  constructor(private renderer: Renderer2) {}
-  display() {
-    const str = this.txt.countStr.toString();
-    const lineHeight = window.getComputedStyle(this.areaRef.nativeElement, null).getPropertyValue('line-height');
-    this.realCount = Math.ceil(this.areaRef.nativeElement.children[0].children[0].clientHeight / parseInt(lineHeight, 10));
-    this.renderer.setStyle(this.areaRef.nativeElement, '-webkit-line-clamp', str);
+  height: number;
+  constructor(private renderer: Renderer2) {
+    this.toolText = '';
+  }
+  @HostListener('window:resize') onResize(): void {
+    setTimeout(() => {
+      this.calcSize();
+      this.makeToolText();
+      this.cutText(this.txt.text);
+    });
+  }
+  private calcSize() {
+    const lineHeight = parseInt(window.getComputedStyle(this.areaRef.nativeElement, null).getPropertyValue('line-height'), 10);
+    this.areaRef.nativeElement.children[1].innerHTML = this.txt.text;
+    this.realCount = Math.ceil(this.areaRef.nativeElement.children[1].clientHeight / lineHeight);
+    if (this.realCount > this.txt.countStr) {
+        this.height = lineHeight * this.txt.countStr;
+        this.renderer.setStyle(this.areaRef.nativeElement.children[0], 'height', this.height + 'px');
+    } else {
+        this.renderer.setStyle(this.areaRef.nativeElement.children[0], 'height', lineHeight * this.realCount + 'px');
+    }
+  }
+  private makeToolText() {
     setTimeout(() => {
       if (this.realCount > this.txt.countStr) {
-        this.text = this.txt.text;
+        this.toolText = this.txt.text;
       } else {
-        this.text = '';
+        this.toolText = '';
       }
     });
   }
-
+  private cutText(content: string) {
+    let end = content.length - 1;
+    for (; end >= 0 && this.areaRef.nativeElement.children[1].clientHeight > this.height; --end) {
+      this.areaRef.nativeElement.children[1].innerHTML = content.slice(0, end) + '...';
+    }
+    this.areaRef.nativeElement.children[0].innerHTML = this.areaRef.nativeElement.children[1].innerHTML;
+    this.areaRef.nativeElement.children[1].innerHTML = '';
+  }
   ngAfterViewInit() {
-    this.display();
+    this.calcSize();
+    this.makeToolText();
+    this.cutText(this.txt.text);
   }
 }
